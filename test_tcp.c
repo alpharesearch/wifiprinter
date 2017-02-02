@@ -28,6 +28,16 @@ using namespace std;
 #define ASCII_FS   28  // Field separator
 #define ASCII_GS   29  // Group separator
 
+#define UPC_A   65
+#define UPC_E   66
+#define EAN13   67
+#define EAN8    68
+#define CODE39  69
+#define ITF     70
+#define CODABAR 71
+#define CODE93  72
+#define CODE128 73
+
 /* 
  * error - wrapper for perror
  */
@@ -93,17 +103,20 @@ int main(int argc, char **argv) {
 		string f3 = "normal 1x";
 		string f4 = "up";
 		string f5 = "underline off";
+		string f6 = "left";
 		
 		bool f1_t= false;
 		bool f2_t= false;
-		int f3_t= 1;
+		int  f3_t= 1;
 		bool f4_t= false;
 		bool f5_t= false;
-		
+		int  f6_t= 1;
 		int last_f = 0;
+		int iBar = 0;
+		bool send = false;
 		
 		clear();
-		printw("F1=%s;F2=%s;F3=%s;F4=%s;F5=%s\nPlease enter text, press ESC to send %i %i or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),strlen(buf), i);
+		printw("^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28\nF1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
 		bzero(buf, BUFSIZE);
 		i = 0;
 		buf[i] = 27;
@@ -141,8 +154,7 @@ int main(int argc, char **argv) {
 						clear();
 						f1 = "BOLD";
 					}
-		            printw("F1=%s;F2=%s;F3=%s;F4=%s;F5=%s\nPlease enter text, press ESC to send %i %i or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),strlen(buf), i);
-					printw("bold on");
+		            printw("F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
 					mvprintw(2,0,"%s\n",buf);
 					f1_t = !f1_t;
 					last_f = 1;
@@ -174,8 +186,7 @@ int main(int argc, char **argv) {
 						clear();
 						f2 = "wb";
 					}
-		            printw("F1=%s;F2=%s;F3=%s;F4=%s;F5=%s\nPlease enter text, press ESC to send %i %i or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),strlen(buf), i);
-					printw("bold on");
+		            printw("F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
 					mvprintw(2,0,"%s\n",buf);
 					f2_t = !f2_t;
 					last_f = 2;
@@ -232,8 +243,7 @@ int main(int argc, char **argv) {
 						f3 = "biggest 4x";
 						f3_t =0;
 					}
-		            printw("F1=%s;F2=%s;F3=%s;F4=%s;F5=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str());
-					printw("bold on");
+		            printw("F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
 					mvprintw(2,0,"%s\n",buf);
 					last_f = 3;
 					break;
@@ -264,8 +274,7 @@ int main(int argc, char **argv) {
 						clear();
 						f4 = "down";
 					}
-		            printw("F1=%s;F2=%s;F3=%s;F4=%s;F5=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str());
-					printw("bold on");
+		            printw("F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
 					mvprintw(2,0,"%s\n",buf);
 					f4_t = !f4_t;
 					last_f = 4;
@@ -297,12 +306,146 @@ int main(int argc, char **argv) {
 						clear();
 						f5 = "underline on";
 					}
-		            printw("F1=%s;F2=%s;F3=%s;F4=%s;F5=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str());
-					printw("bold on");
+		            printw("F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
 					mvprintw(2,0,"%s\n",buf);
 					f5_t = !f5_t;
 					move(2,0);
 					last_f = 5;
+					break;
+				case KEY_F(6):
+					if(last_f == 6){
+						i = i - 3;
+						if(i<0) i=0;
+					}
+					if(f6_t==0)
+					{
+						buf[i] = 27;
+						i++;
+						buf[i] = 'a';
+						i++;
+						buf[i] = '0';
+						i++;
+						clear();
+						f6 = "left";
+						f6_t =1;
+					}
+					else if(f6_t==1)
+					{
+						buf[i] = 27;
+						i++;
+						buf[i] = 'a';
+						i++;
+						buf[i] = '1';
+						i++;
+						clear();
+						f6 = "center";
+						f6_t =2;
+					}
+					else if(f6_t==2)
+					{
+						buf[i] = 27;
+						i++;
+						buf[i] = 'a';
+						i++;
+						buf[i] = '2';
+						i++;
+						clear();
+						f6 = "right";
+						f6_t =0;
+					}
+		            printw("F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					last_f = 6;
+					break;
+				case KEY_F(25)://^F1
+					buf[i] = ASCII_ESC;
+					i++;
+					clear();
+					printw("^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					break;
+				case KEY_F(26):
+					buf[i] = ASCII_GS;
+					i++;
+					clear();
+					printw("^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					break;
+				case KEY_F(27):
+					buf[i] = ASCII_DC2;
+					i++;
+					clear();
+					printw("^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					break;
+				case KEY_F(28):
+					buf[i] = ASCII_FS;
+					i++;
+					clear();
+					printw("^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					break;
+				case KEY_F(29): //^F5
+					buf[i] = ASCII_GS;
+					i++;
+					buf[i] = 'h';
+					i++;
+					buf[i] = 50;
+					i++;
+					clear();
+					printw("^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width; ^F8=Bar Code Type; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					break;
+				case KEY_F(30):
+					buf[i] = ASCII_ESC;
+					i++;
+					buf[i] = 'd';
+					i++;
+					buf[i] = 1;
+					i++;
+					buf[i] = ASCII_GS;
+					i++;
+					buf[i] = 'H';
+					i++;
+					buf[i] = 2;
+					i++;
+					clear();
+					printw("^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width; ^F8=Bar Code Type; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					break;
+				case KEY_F(31):
+					buf[i] = ASCII_GS;
+					i++;
+					buf[i] = 'w';
+					i++;
+					buf[i] = 3;
+					i++;
+					clear();
+					printw("^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width; ^F8=Bar Code Type; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					break;
+				case KEY_F(32):
+					buf[i] = ASCII_GS;
+					i++;
+					buf[i] = 'k';
+					i++;
+					buf[i] = 73;
+					i++;
+					buf[i] = 'X';
+					iBar = i;
+					i++;
+					clear();
+					printw("^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width; ^F8=Bar Code Type; ^F9= Nul/Send Bar Code; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\nUPC_A 11/12 = A; UPC_E 11/12 = B; EAN13 12/13 = C; EAN8 7/8 = D; CODE39 = E; ITF = F; CODABAR = G; CODE93 = H; CODE128 = I\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(3,0,"%s\n",buf);
+					break;
+				case KEY_F(33)://F9
+					//buf[i] = 0;
+					buf[iBar] = i-iBar-1;
+					//i++;
+					clear();
+					printw("^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width; ^F8=Bar Code Type; F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+					mvprintw(2,0,"%s\n",buf);
+					//send = true;
 					break;
 				case KEY_BACKSPACE:
 					if(i>0)buf[i-1] = 0;
@@ -333,6 +476,7 @@ int main(int argc, char **argv) {
 					last_f = 0;
 					break;
 			}
+		if(send) break;
 		}
 		printw("sending... \n");
 	
