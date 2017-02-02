@@ -12,6 +12,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <curses.h>
+#include <iostream>
+#include <string>
+using namespace std;
 
 #define BUFSIZE 1024
 
@@ -38,7 +41,7 @@ int main(int argc, char **argv) {
 	initscr();                      /* Start curses mode            */
     raw();                          /* Line buffering disabled      */
     keypad(stdscr, TRUE);           /* We get F1, F2 etc..          */
-    //noecho();                       /* Don't echo() while we do getch */
+    noecho();                       /* Don't echo() while we do getch */
     int sockfd, portno, n;
     struct sockaddr_in serveraddr;
     struct hostent *server;
@@ -75,40 +78,56 @@ int main(int argc, char **argv) {
     serveraddr.sin_port = htons(portno);
 
     /* connect: create a connection with the server */
-    if (connect(sockfd, &serveraddr, sizeof(serveraddr)) < 0) 
+    if (connect(sockfd, (struct sockaddr *) &serveraddr, sizeof(serveraddr)) < 0) 
       error("ERROR connecting");
 
     /* get message line from the user */
+    
+    string test = "test";
     
     int c;
     int i;
 	timeout(-1);
     do
     {
-		printw("F1=bolt;F2=X;F3=X;F4=X;F5=X\nPlease enter msg, press ESC to send and Ctrl-C to exit:\n");
-		
+		clear();
+		printw("F1=bold;F2=X;F3=X;F4=X;F5=X\nPlease enter text, press ESC to send or Ctrl-C to exit:\n");
 		bzero(buf, BUFSIZE);
 		i = 0;
+		buf[i] = 27;
+		i++;
+		buf[i] = '@';
+		i++;
+		mvprintw(2,0,"%s\n",buf);
+		printw(test.c_str());
 		while((c = getch()) != 27)
 		{       switch(c)
 				{	
 				case KEY_F(1):
-					printw("1");
+					
 					buf[i] = 27;
 					i++;
 					buf[i] = 'E';
 					i++;
 					buf[i] = '1';
 					i++;
+					clear();
+		            printw("F1=BOLD;F2=X;F3=X;F4=X;F5=X\nPlease enter text, press ESC to send or Ctrl-C to exit:\n");
+					printw("bold on");
+					mvprintw(2,0,"%s\n",buf);
 					break;
 				case KEY_F(2):
-					printw("2");
+					
 					buf[i] = 27;
 					i++;
 					buf[i] = 'E';
 					i++;
 					buf[i] = '0';
 					i++;
+					clear();
+					printw("F1=bold;F2=X;F3=X;F4=X;F5=X\nPlease enter text, press ESC to send or Ctrl-C to exit:\n");
+					printw("bold off");
+					mvprintw(2,0,"%s\n",buf);
 					break;
 				case KEY_F(3):
 					printw("3");
@@ -116,27 +135,38 @@ int main(int argc, char **argv) {
 				case KEY_F(4):
 					printw("4");
 					break;
-				case 3:
 				case KEY_F(5):
+					printw("5");
+					move(2,0);
+					break;
+				case KEY_BACKSPACE:
+					if(i>0)buf[i-1] = 0;
+					i--;
+					if(i<0) i=0;
+					mvprintw(2,0,"%s\n",buf);
+					if(i<=0)move(2,0);
+					break;
+				case 3: //ctrl-c
 					printw("Exit");
 					close(sockfd);
 					endwin();
 					return 0;
 					break;
-				case 10:
+				case 10: //enter
 					mvprintw(2,0,"%s\n",buf);
 					buf[i] = c;
 					i++;
 					break;
 				default:
-					printw("KEY NAME : %s - %d\n", keyname(c),c);
+					//printw("KEY NAME : %s - %d\n", keyname(c),c);
 					buf[i] = c;
 					i++;
+					mvprintw(2,0,"%s\n",buf);
 					break;
 			}
 		}
 		printw("sending... \n");
-
+	
 		/* send the message line to the server */
 		buf[i] = '\n';
 		n = write(sockfd, buf, strlen(buf));
