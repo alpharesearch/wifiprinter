@@ -96,6 +96,7 @@ int main(int argc, char **argv) {
     int c;
     int i=0;
 	timeout(-1);
+	bzero(buf, BUFSIZE);
     do
     {
 		string f1 = "bold";
@@ -114,16 +115,13 @@ int main(int argc, char **argv) {
 		int last_f = 0;
 		int iBar = 0;
 		bool send = false;
-		
-		clear();
-		bzero(buf, BUFSIZE);
-		i = 0;
 		//buf[i] = 27;
 		//i++;
 		//buf[i] = '@';
 		//i++;
-		mvprintw(0,0,"F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nF7= Tab setup; F8= Reset; F9= Send/Feed\n^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28;\n^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width\n^F8=Bar Code Type; ^F9= Nul/Send Bar Code;\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
-		mvprintw(7,0,"%s",buf);
+		clear();
+		mvprintw(0,0,"F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nF7= Tab setup; F8= Reset; F9= Send/Feed; F10= atoi; F12= reset buffer\n^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28;\n^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width\n^F8=Bar Code Type; ^F9= Nul/Send Bar Code;\nUPC_A 11/12 = A; UPC_E 11/12 = B; EAN13 12/13 = C; EAN8 7/8 = D\nCODE39 = E; ITF = F; CODABAR = G; CODE93 = H; CODE128\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+		mvprintw(8,0,"%s",buf);
 		while((c = getch()) != 27)
 		{       switch(c)
 				{	
@@ -399,7 +397,7 @@ int main(int argc, char **argv) {
 					i++;
 					buf[i] = 73;
 					i++;
-					buf[i] = 'X';
+					buf[i] = 4;
 					iBar = i;
 					i++;
 					break;
@@ -445,6 +443,16 @@ int main(int argc, char **argv) {
 					i++;
 					send = true;
 					break;
+				case KEY_F(10)://F10
+					int ret1;
+					scanw("%d", &ret1);
+					buf[i] = ret1;
+					i++;
+					break;
+				case KEY_F(12)://F12
+					bzero(buf, BUFSIZE);
+					i = 0;
+					break;
 				case KEY_BACKSPACE:
 					if(i>0)buf[i-1] = 0;
 					i--;
@@ -470,7 +478,7 @@ int main(int argc, char **argv) {
 					last_f = 0;
 					break;
 				default:
-					//printw("KEY NAME : %s - %d\n", keyname(c),c);
+					mvprintw(20,0,"KEY NAME : %s - %d\n", keyname(c),c);
 					buf[i] = c;
 					i++;
 					mvprintw(2,0,"%s\n",buf);
@@ -478,15 +486,15 @@ int main(int argc, char **argv) {
 					break;
 			}
 		clear();
-		mvprintw(0,0,"F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nF7= Tab setup; F8= Reset; F9= Send/Feed\n^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28;\n^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width\n^F8=Bar Code Type; ^F9= Nul/Send Bar Code;\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
-		mvprintw(7,0,"%s",buf);
+		mvprintw(0,0,"F1=%s; F2=%s; F3=%s; F4=%s; F5=%s; F6=%s\nF7= Tab setup; F8= Reset; F9= Send/Feed; F10= atoi; F12= reset buffer\n^F1=ASCII_ESC 27; ^F2=ASCII_GS 29; ^F3=ASCII_DC2 18; ^F4=ASCII_FS 28;\n^F5=Bar Code Hight; ^F6=Bar Code Lable place; ^F7=Bar Code Width\n^F8=Bar Code Type; ^F9= Nul/Send Bar Code;\nUPC_A 11/12 = A; UPC_E 11/12 = B; EAN13 12/13 = C; EAN8 7/8 = D\nCODE39 = E; ITF = F; CODABAR = G; CODE93 = H; CODE128\nPlease enter text, press ESC to send or Ctrl-C to exit:\n",f1.c_str(),f2.c_str(),f3.c_str(),f4.c_str(),f5.c_str(),f6.c_str());
+		mvprintw(8,0,"%s",buf);
 		if(send) break;
 		}
 		printw("sending... \n");
 	
 		/* send the message line to the server */
-		buf[i] = '\n';
-		i++;
+		//buf[i] = '\n';
+		//i++;
 		//n = write(sockfd, buf, strlen(buf));
 		n = write(sockfd, buf, i);
 		if (n < 0){ 
